@@ -1,15 +1,12 @@
     body {
         background: #59CCF2 !important;
         font-family: 'Open Sans', sans-serif;
+        margin-bottom: 80px;
     }
-    
+
     html {
     position: relative;
     min-height: 100%;
-    }
-
-    body {
-    margin-bottom: 80px;
     }
 
     .footer {
@@ -20,10 +17,6 @@
         height: 40px;
         background-color: #11a4d4;
         text-align: right;
-    }
-
-    #ui {
-        text-align: center;
     }
 
     button {
@@ -38,10 +31,6 @@
     button:hover {
     border: none;
     background: #01B4EF;
-    }
-
-    #streamSettings {
-        font-size: 20px;
     }
 
     input {

@@ -85,14 +85,16 @@ function beginTest() {
 }
 
 function radiof(num) {
-    if (num == 1) {
-	    $("#numClicks").show();
-	    $("#timeClicks").hide();
-    }
-    if (num == 2) { // Not using else because maybe implement a both option
-	    $("#timeClicks").show();
-	    $("#numClicks").hide();
-    }
+	switch(num){
+		case 1:
+		$("#numClicks").show();
+		$("#timeClicks").hide();
+		break;
+		case 2:
+		$("#timeClicks").show();
+		$("#numClicks").hide();
+		break;
+	}
 }
 
 function endTest() {
