@@ -8,7 +8,7 @@ body
 {
     text-align: center;
 }
-#submit
+button
 {
     background-color: #20BDF1;
     font-family: 'Open Sans', sans-serif;
@@ -17,7 +17,7 @@ body
     border-radius:2px;
     font-size: 20px;
 }
-#submit:hover {
+button:hover {
     border: none;
     background: #01B4EF;
 }
