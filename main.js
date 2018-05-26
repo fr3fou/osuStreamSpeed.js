@@ -208,25 +208,18 @@ $(document).keypress(function(event)
 
 $(document).mousedown(function(event)
 {
-    if ($("input[name='cmouse']").prop("checked"))
-    {
+    if ($("input[name='cmouse']").prop("checked")){
         document.oncontextmenu = function(e) {stopEvent(e); return false;};
 
-        if (event.keyCode == 13 && testrunning == false) // unnecessary -> if (true == true)
+        if (event.keyCode == 13 && testrunning == false)
             beginTest();
-        if (testrunning == true) // if (true == true)
-        {
-            //if (String.fromCharCode(event.which) == key1 || String.fromCharCode(event.which) == key2)
-            //{
-                if ((event.which) == 1 || (event.which) == 3) // Any reason there are two of these? Removed one...
-                {
-                    switch (beginTime)
-                    {
+        if (testrunning == true) {
+                if ((event.which) == 1 || (event.which) == 3) {
+                    switch (beginTime) {
                         case -1:
                             beginTime = Date.now();
                             $("div#status").html("Test currently running.");
                 updater = setInterval(function() { update(false); }, 16.6);
-
                 if ($("input[name='roption']:checked").val() == "time") {
                     endTimer = setTimeout(function() {
                         endTest();
@@ -236,14 +229,12 @@ $(document).mousedown(function(event)
                             update(true);
                             break;
                     }
-                    if ((clickTimes.length == clickLimit) && ($("input[name='roption']:checked").val() == "clicks"))
-                    {
+                    if ((clickTimes.length == clickLimit) && ($("input[name='roption']:checked").val() == "clicks")) {
                         endTest();
                 return;
                     }
-                }
-            //}
-        }
+         }
+    }
     }
     else
     {
@@ -259,7 +250,7 @@ function stopEvent(event){
 }
 
 $(document).ready(function() {
-    //console.log("hi");
+
     if(!localStorage.getItem('clickLimit'))
         $("input#clickNum").val("20");
     else
@@ -293,77 +284,13 @@ $(document).ready(function() {
 		    },
 		    axisX: {
 			    title: "Time",
-			    //interval: 1
 		    },
 		    data: [
 		    {
-			    type: "spline", //try changing to column, area
-			    //toolTipContent: "{label}: {y} mm",
-			    /*dataPoints: [
-				    { label: "Jan",  y: 5.28 },
-				    { label: "Feb",  y: 3.83 },
-				    { label: "March",y: 6.55 },
-				    { label: "April",y: 4.81 },
-				    { label: "May",  y: 2.37 },
-				    { label: "June", y: 2.33 },
-				    { label: "July", y: 3.06 },
-				    { label: "Aug",  y: 2.94 },
-				    { label: "Sep",  y: 5.41 },
-				    { label: "Oct",  y: 2.17 },
-				    { label: "Nov",  y: 2.17 },
-				    { label: "Dec",  y: 2.80 }
-			    ]*/
+			    type: "spline",
 			    dataPoints: []
 		    }
 		    ]
     });
 
-	/*var chart = new CanvasJS.Chart("bpmchart",{
-		title :{
-			text: "BPM Chart"
-		},			
-		data: [{
-			type: "line",
-			dataPoints: dps 
-		}]
-	});
-	var renChart = function() {
-		if (dps.length > 0) {
-			chart.render();
-		}
-	};
-
-
-	// update chart after specified time. 
-	
-	setInterval(function(){renChart()}, updateInterval); */
 });
-/*
-$(function() {
-    console.log("hi");
-    $(".chartContainer").CanvasJSChart({
-		    title: {
-			    text: "BPM Chart"
-		    },
-		    axisY: {
-			    title: "BPM",
-			    includeZero: false
-		    },
-		    axisX: {
-			    title: "Time",
-			    interval: 1
-		    },
-		    data: [
-		    {
-			    type: "line", //try changing to column, area
-			    dataPoints: dps
-		    }
-		    ]
-    });
-});
-
-/* Paste stuff yay--
- 
- $("#chartContainer").CanvasJSChart({ //Pass chart options
- 
- */

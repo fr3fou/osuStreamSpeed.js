@@ -1,35 +1,49 @@
-body
-{
-    background-color: #59CCF2;
-    font-family: 'Open Sans', sans-serif;
+    body {
+        background: #59CCF2 !important;
+        font-family: 'Open Sans', sans-serif;
+    }
+    
+    html {
+    position: relative;
+    min-height: 100%;
+    }
 
-}
-#ui
-{
-    text-align: center;
-}
-button
-{
-    background-color: #20BDF1;
-    font-family: 'Open Sans', sans-serif;
-    cursor: poiner;
-    border:none;
-    border-radius:2px;
-    font-size: 20px;
-}
-button:hover {
+    body {
+    margin-bottom: 80px;
+    }
+
+    .footer {
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+        margin-top: 20px;
+        height: 40px;
+        background-color: #11a4d4;
+        text-align: right;
+    }
+
+    #ui {
+        text-align: center;
+    }
+
+    button {
+        background-color: #20BDF1;
+        font-family: 'Open Sans', sans-serif;
+        cursor: poiner;
+        border:none;
+        border-radius:2px;
+        font-size: 20px;
+    }
+
+    button:hover {
     border: none;
     background: #01B4EF;
-}
-#streamSettings
-{
-    font-size: 20px;
-}
-input
-{
-    text-align: center;
-}
-footer
-{
-    text-align: right;
-}
+    }
+
+    #streamSettings {
+        font-size: 20px;
+    }
+
+    input {
+        text-align: center;
+    }
