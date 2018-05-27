@@ -1,10 +1,9 @@
-# osuStreamSpeed.js
-An osu! stream speed tester using javascript and jquery.
+<div style="text-align:center"><img src="images/speedbenchmarklogo.png"></div>
 
-You are a dirty cheater if you hold down the key
+# osu!speed benchmark
+A tool that lets you see how fast you can stream in osu!
 
-TODO:
-
-make pretty,
-
-mouse button support
+## Todo (compared to the original one)
+- [x] Make pretty
+- [x] Mouse Button Support
+- [ ] Visual / Audio Feedback 

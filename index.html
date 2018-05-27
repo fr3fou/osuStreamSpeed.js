@@ -1,46 +1,115 @@
-<!doctype html>
+<!DOCTYPE HTML>
 <html>
-    <head>
-        <meta charset=utf-8>
-        <title>you suck at streaming</title>
-        <meta name="description" content="arctismo's web based osu! stream speed benchmark">
-        <meta name="viewport" content="initial-scale=1"/>
-        <meta name="viewport" content="width=device-width"/>
-        <link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'/>
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"/></script>
-        <script src="main.js"/></script>
-        <link rel="stylesheet" href="style.css">
-        <a href="https://github.com/arctic5/osuStreamSpeed.js">
-        <img style="position: absolute; top: 0; left: 0; border: 0;" src="https://camo.githubusercontent.com/121cd7cbdc3e4855075ea8b558508b91ac463ac2/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f6c6566745f677265656e5f3030373230302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_left_green_007200.png"></a>
-    </head>
-    <body>
-        <div id = "ui">
-            <h2>osu! Stream Speed Benchmark</h2>
-            <form id = "streamSettings">
-                Number of clicks<br>
-                <input id = "clickNum" type="number" min="3"/><br><br>
-                Key 1<br>
-                <input id = "key1" maxlength="1"/><br><br>
-                Key 2<br>
-                <input id = "key2" maxlength="1"/><br><br>
-                <button id = "submit" onclick = "beginTest()" type="button">Begin Test</button><br>
-                <div id = "status">Time starts when you make your first click.</div>
-            </form>
-            <h3>Your Results:</h3>
-            <div id = "Result">
-                Tap Speed: 0 taps / 0 seconds.<br>
-                Stream Speed: 0 bpm.<br>
-                Unstable Rate: 0.
-            </div>
-        </div>
-        <br>
-        <footer>
-            Written by arctic<br>
-            GPLv2 Licensed<br>
-            <a href="https://github.com/arctic5/osuStreamSpeed.js">View Source on Github</a>
-        </footer>
 
-        <!--GOOGLE ANALYTICS HERE-->
-        <script src="http://arctic5.github.io/js/ga.js"></script>
-    </body>
+<head>
+	<title>osu!speed benchmark</title>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<meta name="google-site-verification" content="YhuYEzMDzivOgsCqmAD8Kp1IpG3oPoqvXQXyB5QTkAc" />
+	<meta name="msapplication-TileColor" content="#da532c">
+	<meta name="theme-color" content="#ffffff">
+	<link rel="stylesheet" href="assets/css/main.css?version=1.2" />
+	<link rel="apple-touch-icon" sizes="180x180" href="images/favicon/apple-touch-icon.png">
+	<link rel="icon" type="image/png" sizes="32x32" href="images/favicon/favicon-32x32.png">
+	<link rel="icon" type="image/png" sizes="16x16" href="images/favicon/favicon-16x16.png">
+	<link rel="manifest" href="images/favicon/site.webmanifest">
+	<link rel="mask-icon" href="images/favicon/safari-pinned-tab.svg" color="#5bbad5">
+	<meta name="msapplication-TileColor" content="#da532c">
+	<script src="assets/js/jquery.min.js"></script>
+	<script src="assets/js/jquery.scrollex.min.js"></script>
+	<script src="assets/js/jquery.scrolly.min.js"></script>
+	<script src="assets/js/jquery.canvasjs.min.js"></script>
+	<script src="assets/js/speed.js"></script>
+</head>
+
+<body>
+	<div id="wrapper" class="divided">
+		<section class="banner style1 orient-right content-align-left image-position-left fullscreen onload-image-fade-in onload-content-fade-left">
+			<div class="content" id="main" style="padding-top: 1rem">
+				<h1>osu!speed benchmark</h1>
+				<h3>(you suck at streaming v3)</h3>
+				enter click / time amount!
+				<input type="number" value="20" id="clickOrTimeAmount" min="5"> enter key 1!
+				<input type="text" id="key1" value="Z" required="required"> enter key 2!
+				<input type="text" id="key2" value="X" required="required"> choose a method!
+				<select id="method" name="type">
+					<option value="clicks">Click amount based</option>
+					<option value="time">Time amount based</option>
+				</select>
+				<div>
+					enable mouse buttons?
+					<input type="checkbox" id="mouseCheck" style="opacity: 100;-webkit-appearance:checkbox; display: inline-block;float:none">
+				</div>
+				<br>
+				<div style="text-align:center;">
+					<button type="button" id="start">
+						<p>start!</p>
+				</div>
+			</div>
+			<div class="image">
+				<img src="images/image7.jpg" />
+			</div>
+		</section>
+		<div class="content" style="text-align: center; padding-top: 2rem; padding-bottom: 6rem">
+			<a id="resultsAnchor"></a>
+			<h2>Your Results:</h2>
+			<div id="result">
+				Click Amount: 0 clicks / 0 seconds
+				<br> Stream Speed: 0 bpm
+				<br> Unstable Rate: 0
+			</div>
+			<div style="display:flex;justify-content:center;align-items:center;">
+				<div id="chartContainer" class="container" style="text-align:center; width:600px;height:300px;margin-bottom: 120px;margin-top:120px"></div>
+			</div>
+			<div style='display:none;' id="retry">
+				<button style="width: 80%;" type="button" style="text-align: center;">
+					<p>retry!</p>
+			</div>
+			<div style="text-align: center;" id="status">Scroll up to adjust and start the test!</div>
+		</div>
+		<footer class="wrapper style1 align-center" style="background-color: rgb(245,245,245)">
+			<div class="inner">
+				<ul class="icons">
+					<li>
+						<a href="https://twitter.com/fr3fou" class="icon style2 fa-twitter">
+							<span class="label">Twitter</span>
+						</a>
+					</li>
+					<li>
+						<a href="https://github.com/simo3003" class="icon style2 fa-github">
+							<span class="label">GitHub</span>
+						</a>
+					</li>
+					<li>
+						<a href="https://www.twitch.tv/fr3fou" class="icon style2 fa-twitch">
+							<span class="label">Twitch</span>
+						</a>
+					</li>
+					<li>
+						<a href="mailto:simo3003@me.com" class="icon style2 fa-envelope">
+							<span class="label">Email</span>
+						</a>
+					</li>
+					<li>
+						<a href="https://www.youtube.com/channel/UCXudfqkZnDPm8Kg8gijrAlA?view_as=subscriber" class="icon style2 fa-youtube">
+							<span class="label">YouTube</span>
+						</a>
+					</li>
+					<li>
+						<a href="https:///simooo.ga" class="icon style2 fa-link">
+							<span class="label">My Website</span>
+						</a>
+					</li>
+				</ul>
+				Original by arctic, rewritten by Ckris, rewritten again by fr3fou / simo3003
+				<br>
+				<a href="https://github.com/simo3003/osuStreamSpeed.js">View Source on Github</a>
+			</div>
+		</footer>
+	</div>
+	<script src="assets/js/skel.min.js"></script>
+	<script src="assets/js/util.js"></script>
+	<script src="assets/js/main.js"></script>
+</body>
+
 </html>
