@@ -11,14 +11,15 @@ let clickLimit;
 let timeLimit;
 let key1;
 let key2;
+let method;
 
 let updater;
 let endTimer;
 let std;
-let mouse;
+let isMouseEnabled;
 let variance;
 let unstableRate;
-let beginTime;
+let beginTime = -1;
 
 let xVal = 0;
 let yVal = 0;
@@ -32,46 +33,54 @@ let baseData = {
 };
 
 $(document).ready(function () {
-    $('#start').click(function(){
-        $('html, body').animate({
-            scrollTop: $("#resultsAnchor").offset().top
-        }, 500);
-        beginTest();
+    $('#start').click(function () {
+        if(isTestRunning == false){ // checks if the test is running, used to prevent bugs such as timer going up to absurd numbers
+            if (parseInt($('#clickOrTimeAmount').val()) < 5) { // checks if the max clicks / time is less than 5
+                alert("Please enter a value larger than 5");
+                return false;
+            }
+            else if (($('#key1').val().length > 1) || ($('#key2').val().length > 1)) { // checks if there is more than one character in the input field
+                alert("Please only enter a single character");
+                return false;
+            }
+            else {
+                $('#status').html('The test is ready, press either one of the keys or enter to start it!')
+                $('html, body').animate({
+                    scrollTop: $("#resultsAnchor").offset().top
+                }, 500); // scroll to the bottom
+                InitTest(); // initialize the test
+            }
+        }
     });
 
-    if (!localStorage.getItem('clickLimit'))
-        $("input#clickNum").val("20");
-    else
-        $("input#clickNum").val(localStorage.getItem('clickLimit'));
-    if (!localStorage.getItem('key1'))
-        $("input#key1").val("z");
-    else
-        $("input#key1").val(localStorage.getItem('key1'));
-    if (!localStorage.getItem('key2'))
-        $("input#key2").val("x");
-    else
-        $("input#key2").val(localStorage.getItem('key2'));
-    if (!localStorage.getItem('timeLimit'))
-        $("input#clickTime").val("10");
-    else
-        $("input#clickTime").val(localStorage.getItem('timeLimit'));
-    if (!localStorage.getItem('mouse'))
-        $("input[name='cmouse']").prop("checked", false);
-    else
-        $("input[name='cmouse']").prop("checked", localStorage.getItem('mouse') == "true");
+    $('#retry').click(function(){
+            if (parseInt($('#clickOrTimeAmount').val()) < 5) { // checks if the max clicks / time is less than 5
+                alert("Please enter a value larger than 5");
+                return false;
+            }
+            else if (($('#key1').val().length > 1) || ($('#key2').val().length > 1)) { // checks if there is more than one character in the input field
+                alert("Please only enter a single character");
+                return false;
+            }
+            else {
+                $('#status').html('The test is ready, press either one of the keys or enter to start it!')
+                $('html, body').animate({
+                    scrollTop: $("#resultsAnchor").offset().top
+                }, 500); // scroll to the bottom
+                InitTest(); // initialize the test
+            }
+    });
 
-    $("#chartContainer").CanvasJSChart({
+    $("#chartContainer").CanvasJSChart({ // setup the chart
         zoomEnabled: true,
         exportEnabled: true,
         title: {
-            text: "BPM Chart"
         },
         axisY: {
             title: "BPM",
             includeZero: false
         },
         axisX: {
-            title: "Time elapsed",
         },
         data: [
             {
@@ -83,51 +92,35 @@ $(document).ready(function () {
 
 });
 
-function beginTest() {
-    if ($('#method').value == 'time') {
-        timeLimit = Math.round(parseInt($('#clickOrTimeAmount').value));
-    alert(timeLimit);
-        if (timeLimit < 5) {
-            alert("Please enter a value larger than 5");
-            return false;
-        }
-
+function InitTest() {
+    switch ($('#method').val()) {
+        case 'time':
+            method = 'time';
+            timeLimit = parseInt($('#clickOrTimeAmount').val());
+            break;
+        case 'clicks':
+            method = 'clicks';
+            clickLimit = parseInt($('#clickOrTimeAmount').val());
+            break;
     }
-
-    else {
-        clickLimit = Math.round(parseInt($('#clickOrTimeAmount').value));
-        if (clickLimit < 5) {
-            alert("Please enter a value larger than 5");
-            return false;
-        }
-    }
-
     isTestRunning = true;
-    clickAmount.length = 0;
+    clickAmount.length = 0;    
     deviations.length = 0;
     timeDiff.length = 0;
+    counterNumber = 0;
+    unstableRate = 0;    
     beginTime = -1;
-    key1 = $('#key1').val();
-    key2 = $('#key2').val();
-    mouse = $("input[name='cmouse']").prop("checked");
-
-    $("div#status").html("Test ready, press key 1 or key 2 to begin.");
-    $("div#Result").html("\
-        Click Amount: 0 taps / 0 seconds<br>\
-        Stream Speed: 0 bpm<br>\
-        Unstable Rate: 0\
+    std = 0;    
+    key1 = $('#key1').val().toLowerCase();
+    key2 = $('#key2').val().toLowerCase();
+    window.clearInterval(endTimer);
+    isMouseEnabled = $('#mouseCheck').is(':checked')
+    $('#retry').css('display', 'none');
+    $("#result").html("\
+    Click Amount: 0 clicks / 0 seconds\
+    <br> Stream Speed: 0 BPM\
+    <br> Unstable Rate: 0\
 	");
-
-    localStorage.setItem('clickLimit', clickLimit);
-    localStorage.setItem('timeLimit', timeLimit);
-    localStorage.setItem('key1', key1);
-    localStorage.setItem('key2', key2);
-    localStorage.setItem('mouse', mouse);
-    std = 0;
-
-    $("button#submit").hide();
-    $("button#stopbtn").show();
-
     if (runNumber > 0) {
         $("#chartContainer").CanvasJSChart().options.data.push({
             type: "spline",
@@ -140,23 +133,22 @@ function beginTest() {
     return true;
 }
 
-function endTest() {
+function StopTest() {
+
     isTestRunning = false;
-    update(false);
+    Update(false);
     beginTime = -1;
 
-    $("button#submit").html("Retry");
-    $("button#submit").show();
-    $("button#stopbtn").hide();
-    $("div#status").html("Test Finished. Hit the Retry button or press Enter to try again.");
+    $('#retry').css('display', 'block');
+    $("#status").html("<br>Test Finished. Hit the retry button to try again.");
 
-    if ($("input[name='roption']:checked").val() == "time")
+    if (method == 'time')
         window.clearInterval(endTimer);
 
     if (clickAmount.length == 0) // if user hasn't clicked at all, keep results at their defaults
-        $("div#Result").html("\
-	Click Amount: 0 taps / 0 seconds<br>\
-	Stream Speed: 0 bpm<br>\
+        $("#result").html("\
+	Click Amount: 0 clicks / 0 seconds<br>\
+	Stream Speed: 0 BPM<br>\
 	Unstable Rate: 0\
 	")
 
@@ -165,7 +157,77 @@ function endTest() {
     return;
 }
 
-function update(click) {
+function stopEvent(event){
+    if(event.preventDefault != undefined)
+     event.preventDefault();
+    if(event.stopPropagation != undefined)
+     event.stopPropagation();
+   }
+
+$(document).keypress(function (event) {
+    if (isTestRunning == true) {
+        let key = event.key;
+        if (key.toLowerCase().charCodeAt() == (key1.toLowerCase().charCodeAt()) || (key.toLowerCase().charCodeAt() == key2.toLowerCase().charCodeAt())) {
+            switch (beginTime) {
+                case -1:
+                    beginTime = Date.now();
+                    $("#status").html("Test currently running.");
+                    updater = setInterval(function () {
+                        Update(false);}, 16.6); // call the update function every 16.6ms (60Hz)
+                    if (method == 'time') {
+                        endTimer = setTimeout(function () {
+                            StopTest();
+                        }, timeLimit * 1000); // make sure to end the test after the time has ended 
+                    }
+                    break;
+                default:
+                    Update(true);
+                    break;
+            }
+            if ((clickAmount.length == clickLimit) && (method == "clicks")) {
+                StopTest();
+                return;
+            }
+        }
+    }
+});
+
+
+
+$(document).mousedown(function (event) {
+    if (isMouseEnabled) {
+        document.oncontextmenu = function (e) {
+            stopEvent(e); return false;
+        };
+        if (isTestRunning == true) {
+            if ((event.which) == 1 || (event.which) == 3) {
+                switch (beginTime) {
+                    case -1:
+                        beginTime = Date.now();
+                        $("#status").html("Test currently running.");
+                        updater = setInterval(function () { Update(false); }, 16.6);
+                        if (method == 'time') {
+                            endTimer = setTimeout(function () {
+                                StopTest();
+                            }, timeLimit * 1000);
+                        }
+                    default:
+                        Update(true);
+                        break;
+                }
+                if ((clickAmount.length == clickLimit) && (method == 'clicks')) {
+                    StopTest();
+                    return;
+                }
+            }
+        }
+    }
+    else {
+        document.oncontextmenu = undefined;
+    }
+});
+
+function Update(click) {
     if (click) {
         if (timeDiff.length > 0) {
             let sum = timeDiff.reduce(function (a, b) { return a + b });
@@ -191,18 +253,18 @@ function update(click) {
     }
     else {
         counterNumber = (counterNumber + 1) % 30;
-        let streamtime = (Date.now() - beginTime) / 1000;
+        let streamTime = (Date.now() - beginTime) / 1000;
         if (timeDiff.length < 2) {
-            $("div#Result").html("\
-			Click Amount: " + (clickAmount.length.toString() + " taps / " + streamtime.toFixed(3)) + " seconds<br>\
-			Stream Speed: " + (Math.round((((clickAmount.length) / (Date.now() - beginTime) * 60000) / 4) * 100) / 100).toFixed(2) + " bpm<br>\
+            $("#result").html("\
+			Click Amount: " + (clickAmount.length.toString() + " clicks / " + streamTime.toFixed(3)) + " seconds<br>\
+			Stream Speed: " + (Math.round((((clickAmount.length) / (Date.now() - beginTime) * 60000) / 4) * 100) / 100).toFixed(2) + " BPM<br>\
 			Unstable Rate: n/a\
 		");
         }
         else {
-            $("div#Result").html("\
-				Click Amount: " + (clickAmount.length.toString() + " taps / " + streamtime.toFixed(3)) + " seconds.<br>\
-				Stream Speed: " + (Math.round((((clickAmount.length) / (Date.now() - beginTime) * 60000) / 4) * 100) / 100).toFixed(2) + " bpm.<br>\
+            $("#result").html("\
+				Click Amount: " + (clickAmount.length.toString() + " clicks / " + streamTime.toFixed(3)) + " seconds.<br>\
+				Stream Speed: " + (Math.round((((clickAmount.length) / (Date.now() - beginTime) * 60000) / 4) * 100) / 100).toFixed(2) + " BPM<br>\
 				Unstable Rate: " + (Math.round(unstableRate * 100000) / 100000).toFixed(3) + "\
 			");
             if (counterNumber == 0) {
@@ -216,68 +278,6 @@ function update(click) {
         }
     }
 }
-
-$(document).keypress(function (event) {
-    if (event.keyCode == 13 && isTestRunning == false)
-        beginTest();
-    if (isTestRunning == true) {
-        if ((String.fromCharCode(event.which) == key1) || (String.fromCharCode(event.which) == key2)) {
-            switch (beginTime) {
-                case -1:
-                    beginTime = Date.now();
-                    $("div#status").html("Test currently running.");
-                    updater = setInterval(function () { update(false); }, 16.6);
-                    if ($("input[name='roption']:checked").val() == "time") {
-                        endTimer = setTimeout(function () {
-                            endTest();
-                        }, timeLimit * 1000);
-                    }
-
-                default:
-                    update(true);
-                    break;
-            }
-            if ((clickAmount.length == clickLimit) && ($("input[name='roption']:checked").val() == "clicks")) {
-                endTest();
-                return;
-            }
-        }
-    }
-});
-
-$(document).mousedown(function (event) {
-    if ($("input[name='cmouse']").prop("checked")) {
-        document.oncontextmenu = function (e) { stopEvent(e); return false; };
-
-        if (event.keyCode == 13 && isTestRunning == false)
-            beginTest();
-        if (isTestRunning == true) {
-            if ((event.which) == 1 || (event.which) == 3) {
-                switch (beginTime) {
-                    case -1:
-                        beginTime = Date.now();
-                        $("div#status").html("Test currently running.");
-                        updater = setInterval(function () { update(false); }, 16.6);
-                        if ($("input[name='roption']:checked").val() == "time") {
-                            endTimer = setTimeout(function () {
-                                endTest();
-                            }, timeLimit * 1000);
-                        }
-                    default:
-                        update(true);
-                        break;
-                }
-                if ((clickAmount.length == clickLimit) && ($("input[name='roption']:checked").val() == "clicks")) {
-                    endTest();
-                    return;
-                }
-            }
-        }
-    }
-    else {
-        document.oncontextmenu = undefined;
-    }
-});
 
 function stopEvent(event) {
     if (event.preventDefault != undefined)

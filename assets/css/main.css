@@ -14,7 +14,7 @@
 		display: block;
 	}
 
-	body {
+	body, html {
 		line-height: 1;
 	}
 
