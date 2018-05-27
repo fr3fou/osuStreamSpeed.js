@@ -9,3 +9,10 @@ A tool that lets you see how fast you can stream in osu!
 - [ ] Visual / Audio Feedback 
 - [ ] Improve Unstable Rate calculation
 - [ ] Find a fix to prevent key holding 
+
+# Credits
+[artic5](https://github.com/arctic5/osuStreamSpeed.js) for making the original tool
+
+[Ckrisirkc](https://github.com/ckrisirkc/osuStreamSpeed.js) for improving it
+
+[kaishh](https://github.com/kaishh/osuStreamSpeed.js) for mouse support
