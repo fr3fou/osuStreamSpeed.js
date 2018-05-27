@@ -1,81 +1,114 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'/>
-    <link rel="stylesheet" href="assets/css/style.css">
-    <script src="https://code.jquery.com/jquery-3.3.1.min.js"integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
-    <script src="canvasjs-1.8.0/jquery.canvasjs.min.js"></script>
-    <script src="assets/js/main.js"/></script>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" crossorigin="anonymous"></script>
-    <title>you suck at streaming v3</title>
-  </head>
-  <body>
-    <!--background slideshow-->
+<!DOCTYPE HTML>
+<html>
 
-    <!--main conatiner-->
-    <div class="container text-center" role="main" id="mainContainer">
-          <!--header-->
-          <div class="page-header text-center">
-            <h1>osu! Stream Speed Benchmark</h1>
-          </div>
-          <!--radio buttons-->
-          <div id="radiobtns" class="text-center">
-                  <input class="radio-inline" style="margin-left: 20px !important" type="radio" name="roption" onClick="radioSwitch(1)" value="clicks" checked /> Clicks
-                  <input class="radio-inline" style="margin-left: 20px !important" type="radio" name="roption" onClick="radioSwitch(2)" value="time" /> Time <br>
-                  <input type="checkbox" name="cmouse"/> Enable mouse buttons
-          </div>
-          <br>
-          <!--settings-->
-          <div id="settings">
-                  <div id="numClicks">
-                    <label>Click amount</label>
-                      <input id="clickNum" type="number" min="3"/>
-                  </div>
-                  <div id="timeClicks" style="display:none">
-                   <label>Time</label> 
-                      <input id="clickTime" type="number" min="2"/>
-                  </div>
-                  <div id="inputKeys">
-                    <label>Key 1</label>
-                      <input id="key1" maxlength="1"/><br>
-                    <label>Key 2</label>
-                      <input id="key2" maxlength="1"/><br>
-                  </div>
-          </div>
-          <!--start/stop button-->
-          <button id="submit" onclick ="beginTest()" type="button">Begin Test</button>
-          <button id="stopbtn" onClick="endTest()" type="button" style="display:none">Stop Test</button><br>
-          <div id="status">Time starts when you make your first click.</div>
-          <!--results-->
-          <h3>Your Results:</h3>
-          <div id="Result">
-            Click Amount: 0 taps / 0 seconds<br/>
-            Stream Speed: 0 bpm<br>
-            Unstable Rate: 0
-          </div>
-          <!--chart / canvasjs-->
-          <div id="chartContainer" class="container" style="width:600px;height:300px;margin-bottom: 80px;margin-top:15px"></div>
-    </div>
-    <footer class="footer">
-      <div class="container" style="text-align:left"> 
-          Original by arctic, rewritten by Ckris, rewritten again by fr3fou / simo3003<br>
-          <a href="https://github.com/simo3003/osuStreamSpeed.js">View Source on Github</a>
-      </div>
-      <div id="slideshowContainer">
-          <ul class="cb-slideshow">
-              <li><span>img1</span></li>
-              <li><span>img2</span></li>
-              <li><span>img3</span></li>
-              <li><span>img4</span></li>
-              <li><span>img5</span></li>
-              <li><span>img6</span></li>
-              <li><span>img7</span></li>
-            </ul>
-      </div>
-    </footer>
-  </body>
+<head>
+	<title>osu!speed benchmark</title>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<meta name="google-site-verification" content="YhuYEzMDzivOgsCqmAD8Kp1IpG3oPoqvXQXyB5QTkAc" />
+	<meta name="msapplication-TileColor" content="#da532c">
+	<meta name="theme-color" content="#ffffff">
+	<link rel="stylesheet" href="assets/css/main.css?version=1.2" />
+	<link rel="apple-touch-icon" sizes="180x180" href="images/favicon/apple-touch-icon.png">
+	<link rel="icon" type="image/png" sizes="32x32" href="images/favicon/favicon-32x32.png">
+	<link rel="icon" type="image/png" sizes="16x16" href="images/favicon/favicon-16x16.png">
+	<link rel="manifest" href="images/favicon/site.webmanifest">
+	<link rel="mask-icon" href="images/favicon/safari-pinned-tab.svg" color="#5bbad5">
+	<meta name="msapplication-TileColor" content="#da532c">
+	<script src="assets/js/jquery.min.js"></script>
+	<script src="assets/js/jquery.scrollex.min.js"></script>
+	<script src="assets/js/jquery.scrolly.min.js"></script>
+	<script src="assets/js/jquery.canvasjs.min.js"></script>
+	<script src="assets/js/speed.js"></script>
+</head>
+
+<body>
+	<div id="wrapper" class="divided">
+		<section class="banner style1 orient-right content-align-left image-position-left fullscreen onload-image-fade-in onload-content-fade-left">
+			<div class="content" id="main" style="padding-top: 1rem">
+				<h1>osu!speed benchmark</h1>
+				<h3>(you suck at streaming v3)</h3>
+				<p class="major">
+					See how fast you can stream!</p>
+				enter click / time amount!
+				<input type="text" value="20" id="clickOrTimeAmount"> enter key 1!
+				<input type="text" id="key1" value="Z" required="required"> enter key 2!
+				<input type="text" id="key2" value="X" required="required"> choose a method!
+				<select id="method" name="type">
+					<option value="plays">Click amount based</option>
+					<option value="beatmaps">Time amount based</option>
+				</select>
+				<div>
+					enable mouse buttons?
+					<input type="checkbox" id="mouseCheck" style="opacity: 100;-webkit-appearance:checkbox; display: inline-block;float:none">
+				</div>
+
+				<br>
+				<div style="text-align:center;">
+					<button type="button" onclick="">
+						<p>start!</p>
+						</a>
+				</div>
+			</div>
+			<div class="image">
+				<img src="images/image7.jpg" />
+			</div>
+		</section>
+		<div class="content" style="text-align: center; padding-top: 2rem;">
+			<h3>Your Results:</h3>
+			<div id="Result">
+				Click Amount: 0 taps / 0 seconds
+				<br/> Stream Speed: 0 bpm
+				<br> Unstable Rate: 0
+			</div>
+			<!--chart / canvasjs-->
+			<div id="chartContainer" class="container" style="text-align:center; width:600px;height:300px;margin-bottom: 80px;margin-top:15px"></div>
+		</div>
+	</div>
+	<footer class="wrapper style1 align-center">
+		<div class="inner">
+			<ul class="icons">
+				<li>
+					<a href="https://twitter.com/fr3fou" class="icon style2 fa-twitter">
+						<span class="label">Twitter</span>
+					</a>
+				</li>
+				<li>
+					<a href="https://github.com/simo3003" class="icon style2 fa-github">
+						<span class="label">GitHub</span>
+					</a>
+				</li>
+				<li>
+					<a href="https://www.twitch.tv/fr3fou" class="icon style2 fa-twitch">
+						<span class="label">Twitch</span>
+					</a>
+				</li>
+				<li>
+					<a href="mailto:simo3003@me.com" class="icon style2 fa-envelope">
+						<span class="label">Email</span>
+					</a>
+				</li>
+				<li>
+					<a href="https://www.youtube.com/channel/UCXudfqkZnDPm8Kg8gijrAlA?view_as=subscriber" class="icon style2 fa-youtube">
+						<span class="label">YouTube</span>
+					</a>
+				</li>
+				<li>
+					<a href="https:///simooo.ga" class="icon style2 fa-link">
+						<span class="label">My Website</span>
+					</a>
+				</li>
+			</ul>
+			Original by arctic, rewritten by Ckris, rewritten again by fr3fou / simo3003
+			<br>
+			<a href="https://github.com/simo3003/osuStreamSpeed.js">View Source on Github</a>
+		</div>
+	</footer>
+	</div>
+
+	<script src="assets/js/skel.min.js"></script>
+	<script src="assets/js/util.js"></script>
+	<script src="assets/js/main.js"></script>
+</body>
+
 </html>

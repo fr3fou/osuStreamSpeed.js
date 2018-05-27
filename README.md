@@ -1,12 +1,4 @@
-# osuStreamSpeed.js
-An osu! stream speed tester using javascript and jquery with CanvasJS for graphs.
+<div style="text-align:center"><img src="images/ppFromThePastLogo.png" class="center"></div>
 
-You are a dirty cheater if you hold down the key
-
-TODO:
-
-make pretty,
-
-mouse button support
-
-maybe add in some kind of visual aid?
+# ppFromThePast
+A tool that calculates how much pp you would have if you were to go back in the past! (goes back to 2012, hopefully..)

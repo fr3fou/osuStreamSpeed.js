@@ -1,293 +1,357 @@
-// i suck at variable naming
-// don't worry we all do
-// heh
+/*
+	Story by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+*/
 
-let clickAmount = [];
-let deviations = [];
-let timeDiff = [];
+(function($) {
 
-let isTestRunning = false; 
-let clickLimit = 20;
-let timeLimit = 10;
-let key1 = "z";
-let key2 = "x";
-
-let updater;
-let endTimer;
-let std;
-let mouse;
-let variance;
-let unstableRate;
-
-let xVal = 0;
-let yVal = 0;	
-let updateInterval = 100;
-let dataLength = 50;
-let runNumber = 0;
-let counterNumber = 0;
-let baseData = {
-	    type: "spline", 
-	    dataPoints: []
-};
-	
-function beginTest() {
-    clickLimit = Math.round(parseInt(document.getElementById('clickNum').value));
-	timeLimit = Math.round(parseInt(document.getElementById('clickTime').value));
-
-	if (timeLimit < 2) {
-		alert("Please enter a value larger than 2");
-		return false;
-	}
-
-    if (clickLimit < 3) {
-        alert("Please enter a value larger than 3");
-        return false;
-	}
-
-    isTestRunning = true;	
-    clickAmount.length = 0;
-    deviations.length = 0;
-    timeDiff.length = 0;
-    beginTime = -1;
-    key1 = $('#key1').val();
-    key2 = $('#key2').val();
-	mouse = $("input[name='cmouse']").prop("checked");
-	
-    $("div#status").html("Test ready, press key 1 or key 2 to begin.");
-    $("div#Result").html("\
-        Click Amount: 0 taps / 0 seconds<br>\
-        Stream Speed: 0 bpm<br>\
-        Unstable Rate: 0\
-	");
-	
-    localStorage.setItem('clickLimit', clickLimit);
-    localStorage.setItem('timeLimit', timeLimit);
-    localStorage.setItem('key1', key1);
-    localStorage.setItem('key2', key2);
-    localStorage.setItem('mouse', mouse);
-	std = 0;
-	
-    $("button#submit").hide();
-	$("button#stopbtn").show();
-	
-    if (runNumber > 0) {
-	$("#chartContainer").CanvasJSChart().options.data.push({
-	    type: "spline",
-	    dataPoints: []
+	skel.breakpoints({
+		xlarge: '(max-width: 1680px)',
+		large: '(max-width: 1280px)',
+		medium: '(max-width: 980px)',
+		small: '(max-width: 736px)',
+		xsmall: '(max-width: 480px)',
+		xxsmall: '(max-width: 360px)'
 	});
-	$("#chartContainer").CanvasJSChart().options.data[runNumber - 1].visible = false;
-    }
-    $("#chartContainer").CanvasJSChart().render();
-    counterNumber = 0;
-    return true;
-}
 
-function radioSwitch(num) {
-	switch(num){
-		case 1:
-		$("#numClicks").show();
-		$("#timeClicks").hide();
-		break;
-		case 2:
-		$("#timeClicks").show();
-		$("#numClicks").hide();
-		break;
-	}
-}
+	$(function() {
 
-function endTest() {
-    isTestRunning = false;
-    update(false);
-	beginTime = -1;
+		var	$window = $(window),
+			$body = $('body'),
+			$wrapper = $('#wrapper');
 
-	$("button#submit").html("Retry");
-    $("button#submit").show();
-	$("button#stopbtn").hide();
-	$("div#status").html("Test Finished. Hit the Retry button or press Enter to try again.");
-	
-	if ($("input[name='roption']:checked").val() == "time") 
-	window.clearInterval(endTimer);
-	
-	if(clickAmount.length == 0) // if user hasn't clicked at all, keep results at their defaults
-	$("div#Result").html("\
-	Click Amount: 0 taps / 0 seconds<br>\
-	Stream Speed: 0 bpm<br>\
-	Unstable Rate: 0\
-	")
+		// Disable animations/transitions until the page has loaded.
+			$body.addClass('is-loading');
 
-	window.clearInterval(updater);	
-    runNumber++;
-    return;
-}
-
-function update(click) {
-    if (click) {
-		if (timeDiff.length > 0) {
-			let sum = timeDiff.reduce(function(a, b){return a + b});
-			let avg = sum / timeDiff.length;
-			$.each(timeDiff, function(i,v) {
-				deviations[i] = (v - avg) * (v - avg);
+			$window.on('load', function() {
+				window.setTimeout(function() {
+					$body.removeClass('is-loading');
+				}, 100);
 			});
-			variance = deviations.reduce(function(a, b) {return a + b;});
-			std = Math.sqrt(variance / deviations.length);
-			unstableRate = std * 10;
-		}
-		clickAmount.push(Date.now());
-		if (clickAmount.length > 1)
-			timeDiff.push(clickAmount[clickAmount.length - 1] - clickAmount[clickAmount.length - 2]);
-		if (clickAmount.length > 2) {
-			let chart = $("#chartContainer").CanvasJSChart();
-			chart.options.data[runNumber].dataPoints.push({
-				x: (Date.now() - beginTime)/1000.0,
-				y: (Math.round((((clickAmount.length) / (Date.now() - beginTime) * 60000) / 4) * 100) / 100)
+
+		// Fix: Placeholder polyfill.
+			$('form').placeholder();
+
+		// Prioritize "important" elements on medium.
+			skel.on('+medium -medium', function() {
+				$.prioritize(
+					'.important\\28 medium\\29',
+					skel.breakpoint('medium').active
+				);
 			});
-			chart.render();
-		}
-	} 
-	else {
-		counterNumber = (counterNumber + 1) % 30;
-		let streamtime = (Date.now() - beginTime) / 1000;
-		if (timeDiff.length < 2) {
-			$("div#Result").html("\
-			Click Amount: " + (clickAmount.length.toString() + " taps / " + streamtime.toFixed(3)) + " seconds<br>\
-			Stream Speed: " + (Math.round((((clickAmount.length) / (Date.now() - beginTime) * 60000)/4) * 100) / 100).toFixed(2) + " bpm<br>\
-			Unstable Rate: n/a\
-		");
-		}	 
-		else {
-			$("div#Result").html("\
-				Click Amount: " + (clickAmount.length.toString() + " taps / " + streamtime.toFixed(3)) + " seconds.<br>\
-				Stream Speed: " + (Math.round((((clickAmount.length) / (Date.now() - beginTime) * 60000)/4) * 100) / 100).toFixed(2) + " bpm.<br>\
-				Unstable Rate: " + (Math.round(unstableRate * 100000) / 100000).toFixed(3) + "\
-			");
-			if (counterNumber == 0) {
-			let chart = $("#chartContainer").CanvasJSChart();
-			chart.options.data[runNumber].dataPoints.push({
-				x: (Date.now() - beginTime)/1000.0,
-				y: (Math.round((((clickAmount.length) / (Date.now() - beginTime) * 60000)/4) * 100) / 100)
-			});
-			chart.render();
-			}
-		}
-    }
-}
 
-$(document).keypress(function(event) {
-    if (event.keyCode == 13 && isTestRunning == false) 
-        beginTest();
-    if (isTestRunning == true) 
-    {
-            if ((String.fromCharCode(event.which) == key1) || (String.fromCharCode(event.which) == key2)) {
-                switch (beginTime)
-                {
-                    case -1:
-                        beginTime = Date.now();
-                        $("div#status").html("Test currently running.");
-						updater = setInterval(function() { update(false); }, 16.6);
-						if ($("input[name='roption']:checked").val() == "time") {
-							endTimer = setTimeout(function() {
-								endTest();
-							}, timeLimit * 1000);
-						}
+		// Browser fixes.
 
-                    default:
-                        update(true);
-                        break;
-                }
-                if ((clickAmount.length == clickLimit) && ($("input[name='roption']:checked").val() == "clicks"))
-                {
-                    endTest();
-		    return;
-                }
-            }
-    }
-});
+			// IE: Flexbox min-height bug.
+				if (skel.vars.browser == 'ie')
+					(function() {
 
-$(document).mousedown(function(event)
-{
-    if ($("input[name='cmouse']").prop("checked")){
-        document.oncontextmenu = function(e) {stopEvent(e); return false;};
+						var flexboxFixTimeoutId;
 
-        if (event.keyCode == 13 && isTestRunning == false)
-            beginTest();
-        if (isTestRunning == true) {
-                if ((event.which) == 1 || (event.which) == 3) {
-                    switch (beginTime) {
-                        case -1:
-                            beginTime = Date.now();
-                            $("div#status").html("Test currently running.");
-                updater = setInterval(function() { update(false); }, 16.6);
-                if ($("input[name='roption']:checked").val() == "time") {
-                    endTimer = setTimeout(function() {
-                        endTest();
-                    }, timeLimit * 1000);
-                }
-                        default:
-                            update(true);
-                            break;
-                    }
-                    if ((clickAmount.length == clickLimit) && ($("input[name='roption']:checked").val() == "clicks")) {
-                        endTest();
-                return;
-                    }
-         }
-    }
-    }
-    else
-    {
-        document.oncontextmenu = undefined;
-    }
-});
+						$window.on('resize.flexbox-fix', function() {
 
-function stopEvent(event){
- if(event.preventDefault != undefined)
-  event.preventDefault();
- if(event.stopPropagation != undefined)
-  event.stopPropagation();
-}
+							var $x = $('.fullscreen');
 
-$(document).ready(function() {
+							clearTimeout(flexboxFixTimeoutId);
 
-    if(!localStorage.getItem('clickLimit'))
-        $("input#clickNum").val("20");
-    else
-        $("input#clickNum").val(localStorage.getItem('clickLimit'));
-    if(!localStorage.getItem('key1'))
-        $("input#key1").val("z");
-    else
-        $("input#key1").val(localStorage.getItem('key1'));
-    if(!localStorage.getItem('key2'))
-        $("input#key2").val("x");
-    else
-        $("input#key2").val(localStorage.getItem('key2'));
-    if(!localStorage.getItem('timeLimit'))
-        $("input#clickTime").val("10");
-    else
-        $("input#clickTime").val(localStorage.getItem('timeLimit'));
-    if(!localStorage.getItem('mouse'))
-        $("input[name='cmouse']").prop("checked", false);
-    else
-        $("input[name='cmouse']").prop("checked", localStorage.getItem('mouse') == "true");
+							flexboxFixTimeoutId = setTimeout(function() {
 
-    $("#chartContainer").CanvasJSChart({
-		    zoomEnabled: true,
-		    exportEnabled: true,
-		    title: {
-			    text: "BPM Chart"
-		    },
-		    axisY: {
-			    title: "BPM",
-			    includeZero: false
-		    },
-		    axisX: {
-			    title: "Time",
-		    },
-		    data: [
-		    {
-			    type: "spline",
-			    dataPoints: []
-			}
-			]
-    });
+								if ($x.prop('scrollHeight') > $window.height())
+									$x.css('height', 'auto');
+								else
+									$x.css('height', '100vh');
 
-});
+							}, 250);
+
+						}).triggerHandler('resize.flexbox-fix');
+
+					})();
+
+			// Object fit workaround.
+				if (!skel.canUse('object-fit'))
+					(function() {
+
+						$('.banner .image, .spotlight .image').each(function() {
+
+							var $this = $(this),
+								$img = $this.children('img'),
+								positionClass = $this.parent().attr('class').match(/image-position-([a-z]+)/);
+
+							// Set image.
+								$this
+									.css('background-image', 'url("' + $img.attr('src') + '")')
+									.css('background-repeat', 'no-repeat')
+									.css('background-size', 'cover');
+
+							// Set position.
+								switch (positionClass.length > 1 ? positionClass[1] : '') {
+
+									case 'left':
+										$this.css('background-position', 'left');
+										break;
+
+									case 'right':
+										$this.css('background-position', 'right');
+										break;
+
+									default:
+									case 'center':
+										$this.css('background-position', 'center');
+										break;
+
+								}
+
+							// Hide original.
+								$img.css('opacity', '0');
+
+						});
+
+					})();
+
+		// Smooth scroll.
+			$('.smooth-scroll').scrolly();
+			$('.smooth-scroll-middle').scrolly({ anchor: 'middle' });
+
+		// Wrapper.
+			$wrapper.children()
+				.scrollex({
+					top:		'30vh',
+					bottom:		'30vh',
+					initialize:	function() {
+						$(this).addClass('is-inactive');
+					},
+					terminate:	function() {
+						$(this).removeClass('is-inactive');
+					},
+					enter:		function() {
+						$(this).removeClass('is-inactive');
+					},
+					leave:		function() {
+
+						var $this = $(this);
+
+						if ($this.hasClass('onscroll-bidirectional'))
+							$this.addClass('is-inactive');
+
+					}
+				});
+
+		// Items.
+			$('.items')
+				.scrollex({
+					top:		'30vh',
+					bottom:		'30vh',
+					delay:		50,
+					initialize:	function() {
+						$(this).addClass('is-inactive');
+					},
+					terminate:	function() {
+						$(this).removeClass('is-inactive');
+					},
+					enter:		function() {
+						$(this).removeClass('is-inactive');
+					},
+					leave:		function() {
+
+						var $this = $(this);
+
+						if ($this.hasClass('onscroll-bidirectional'))
+							$this.addClass('is-inactive');
+
+					}
+				})
+				.children()
+					.wrapInner('<div class="inner"></div>');
+
+		// Gallery.
+			$('.gallery')
+				.wrapInner('<div class="inner"></div>')
+				.prepend(skel.vars.mobile ? '' : '<div class="forward"></div><div class="backward"></div>')
+				.scrollex({
+					top:		'30vh',
+					bottom:		'30vh',
+					delay:		50,
+					initialize:	function() {
+						$(this).addClass('is-inactive');
+					},
+					terminate:	function() {
+						$(this).removeClass('is-inactive');
+					},
+					enter:		function() {
+						$(this).removeClass('is-inactive');
+					},
+					leave:		function() {
+
+						var $this = $(this);
+
+						if ($this.hasClass('onscroll-bidirectional'))
+							$this.addClass('is-inactive');
+
+					}
+				})
+				.children('.inner')
+					//.css('overflow', 'hidden')
+					.css('overflow-y', skel.vars.mobile ? 'visible' : 'hidden')
+					.css('overflow-x', skel.vars.mobile ? 'scroll' : 'hidden')
+					.scrollLeft(0);
+
+			// Style #1.
+				// ...
+
+			// Style #2.
+				$('.gallery')
+					.on('wheel', '.inner', function(event) {
+
+						var	$this = $(this),
+							delta = (event.originalEvent.deltaX * 10);
+
+						// Cap delta.
+							if (delta > 0)
+								delta = Math.min(25, delta);
+							else if (delta < 0)
+								delta = Math.max(-25, delta);
+
+						// Scroll.
+							$this.scrollLeft( $this.scrollLeft() + delta );
+
+					})
+					.on('mouseenter', '.forward, .backward', function(event) {
+
+						var $this = $(this),
+							$inner = $this.siblings('.inner'),
+							direction = ($this.hasClass('forward') ? 1 : -1);
+
+						// Clear move interval.
+							clearInterval(this._gallery_moveIntervalId);
+
+						// Start interval.
+							this._gallery_moveIntervalId = setInterval(function() {
+								$inner.scrollLeft( $inner.scrollLeft() + (5 * direction) );
+							}, 10);
+
+					})
+					.on('mouseleave', '.forward, .backward', function(event) {
+
+						// Clear move interval.
+							clearInterval(this._gallery_moveIntervalId);
+
+					});
+
+			// Lightbox.
+				$('.gallery.lightbox')
+					.on('click', 'a', function(event) {
+
+						var $a = $(this),
+							$gallery = $a.parents('.gallery'),
+							$modal = $gallery.children('.modal'),
+							$modalImg = $modal.find('img'),
+							href = $a.attr('href');
+
+						// Not an image? Bail.
+							if (!href.match(/\.(jpg|gif|png|mp4)$/))
+								return;
+
+						// Prevent default.
+							event.preventDefault();
+							event.stopPropagation();
+
+						// Locked? Bail.
+							if ($modal[0]._locked)
+								return;
+
+						// Lock.
+							$modal[0]._locked = true;
+
+						// Set src.
+							$modalImg.attr('src', href);
+
+						// Set visible.
+							$modal.addClass('visible');
+
+						// Focus.
+							$modal.focus();
+
+						// Delay.
+							setTimeout(function() {
+
+								// Unlock.
+									$modal[0]._locked = false;
+
+							}, 600);
+
+					})
+					.on('click', '.modal', function(event) {
+
+						var $modal = $(this),
+							$modalImg = $modal.find('img');
+
+						// Locked? Bail.
+							if ($modal[0]._locked)
+								return;
+
+						// Already hidden? Bail.
+							if (!$modal.hasClass('visible'))
+								return;
+
+						// Lock.
+							$modal[0]._locked = true;
+
+						// Clear visible, loaded.
+							$modal
+								.removeClass('loaded')
+
+						// Delay.
+							setTimeout(function() {
+
+								$modal
+									.removeClass('visible')
+
+								setTimeout(function() {
+
+									// Clear src.
+										$modalImg.attr('src', '');
+
+									// Unlock.
+										$modal[0]._locked = false;
+
+									// Focus.
+										$body.focus();
+
+								}, 475);
+
+							}, 125);
+
+					})
+					.on('keypress', '.modal', function(event) {
+
+						var $modal = $(this);
+
+						// Escape? Hide modal.
+							if (event.keyCode == 27)
+								$modal.trigger('click');
+
+					})
+					.prepend('<div class="modal" tabIndex="-1"><div class="inner"><img src="" /></div></div>')
+						.find('img')
+							.on('load', function(event) {
+
+								var $modalImg = $(this),
+									$modal = $modalImg.parents('.modal');
+
+								setTimeout(function() {
+
+									// No longer visible? Bail.
+										if (!$modal.hasClass('visible'))
+											return;
+
+									// Set loaded.
+										$modal.addClass('loaded');
+
+								}, 275);
+
+							});
+
+	});
+
+})(jQuery);
