@@ -7,3 +7,4 @@ A tool that lets you see how fast you can stream in osu!
 - [x] Make pretty
 - [x] Mouse Button Support
 - [ ] Visual / Audio Feedback 
+- [ ] Improve Unstable Rate calculation
