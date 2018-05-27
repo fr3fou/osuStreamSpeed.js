@@ -8,3 +8,4 @@ A tool that lets you see how fast you can stream in osu!
 - [x] Mouse Button Support
 - [ ] Visual / Audio Feedback 
 - [ ] Improve Unstable Rate calculation
+- [ ] Find a fix to prevent key holding 
