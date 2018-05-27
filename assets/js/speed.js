@@ -44,7 +44,7 @@ $(document).ready(function () {
                 return false;
             }
             else {
-                $('#status').html('The test is ready, press either one of the keys or enter to start it!')
+                $('#status').html('The test is ready, press either one of the keys to start it!')
                 $('html, body').animate({
                     scrollTop: $("#resultsAnchor").offset().top
                 }, 500); // scroll to the bottom
@@ -63,7 +63,7 @@ $(document).ready(function () {
                 return false;
             }
             else {
-                $('#status').html('The test is ready, press either one of the keys or enter to start it!')
+                $('#status').html('The test is ready, press either one of the keys to start it!')
                 $('html, body').animate({
                     scrollTop: $("#resultsAnchor").offset().top
                 }, 500); // scroll to the bottom
@@ -171,7 +171,7 @@ $(document).keypress(function (event) {
             switch (beginTime) {
                 case -1:
                     beginTime = Date.now();
-                    $("#status").html("Test currently running.");
+                    $("#status").html("Test currently running. Press ESC to stop it.");
                     updater = setInterval(function () {
                         Update(false);}, 16.6); // call the update function every 16.6ms (60Hz)
                     if (method == 'time') {
@@ -192,6 +192,11 @@ $(document).keypress(function (event) {
     }
 });
 
+$(document).keyup(function (event){
+    if (event.keyCode === 27 && isTestRunning == true){ // if the user has pressed escape, stop the test
+        StopTest();
+    }
+});
 
 
 $(document).mousedown(function (event) {
@@ -204,7 +209,7 @@ $(document).mousedown(function (event) {
                 switch (beginTime) {
                     case -1:
                         beginTime = Date.now();
-                        $("#status").html("Test currently running.");
+                        $("#status").html("Test currently running. Press ESC to stop it..");
                         updater = setInterval(function () { Update(false); }, 16.6);
                         if (method == 'time') {
                             endTimer = setTimeout(function () {
