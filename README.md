@@ -1,4 +1,4 @@
-<div style="text-align:center"><img src="images/speedbenchmarklogo.png"></div>
+<div style="text-align:center"><img width="50%" height="50%" src="images/speedbenchmarklogo.png"></div>
 
 # osu!speed benchmark
 A tool that lets you see how fast you can stream in osu!
