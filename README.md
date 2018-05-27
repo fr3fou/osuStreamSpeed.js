@@ -1,4 +1,5 @@
-<div style="text-align:center"><img src="images/ppFromThePastLogo.png" class="center"></div>
+<div style="text-align:center"><img src="images/speedbenchmarklogo.png"></div>
 
-# ppFromThePast
-A tool that calculates how much pp you would have if you were to go back in the past! (goes back to 2012, hopefully..)
+# osu!speed benchmark
+A tool that lets you see how fast you can stream in osu!
+

@@ -7,10 +7,10 @@ let deviations = [];
 let timeDiff = [];
 
 let isTestRunning = false;
-let clickLimit = 20;
-let timeLimit = 10;
-let key1 = "z";
-let key2 = "x";
+let clickLimit;
+let timeLimit;
+let key1;
+let key2;
 
 let updater;
 let endTimer;
@@ -31,21 +31,73 @@ let baseData = {
     dataPoints: []
 };
 
-function beginTest() {
+$(document).ready(function () {
+    $('#start').click(function(){
+        $('html, body').animate({
+            scrollTop: $("#resultsAnchor").offset().top
+        }, 500);
+        beginTest();
+    });
 
-    if ($('#method').value == 'Time amount based') {
+    if (!localStorage.getItem('clickLimit'))
+        $("input#clickNum").val("20");
+    else
+        $("input#clickNum").val(localStorage.getItem('clickLimit'));
+    if (!localStorage.getItem('key1'))
+        $("input#key1").val("z");
+    else
+        $("input#key1").val(localStorage.getItem('key1'));
+    if (!localStorage.getItem('key2'))
+        $("input#key2").val("x");
+    else
+        $("input#key2").val(localStorage.getItem('key2'));
+    if (!localStorage.getItem('timeLimit'))
+        $("input#clickTime").val("10");
+    else
+        $("input#clickTime").val(localStorage.getItem('timeLimit'));
+    if (!localStorage.getItem('mouse'))
+        $("input[name='cmouse']").prop("checked", false);
+    else
+        $("input[name='cmouse']").prop("checked", localStorage.getItem('mouse') == "true");
+
+    $("#chartContainer").CanvasJSChart({
+        zoomEnabled: true,
+        exportEnabled: true,
+        title: {
+            text: "BPM Chart"
+        },
+        axisY: {
+            title: "BPM",
+            includeZero: false
+        },
+        axisX: {
+            title: "Time elapsed",
+        },
+        data: [
+            {
+                type: "spline",
+                dataPoints: []
+            }
+        ]
+    });
+
+});
+
+function beginTest() {
+    if ($('#method').value == 'time') {
         timeLimit = Math.round(parseInt($('#clickOrTimeAmount').value));
-        if (timeLimit < 2) {
-            alert("Please enter a value larger than 2");
+    alert(timeLimit);
+        if (timeLimit < 5) {
+            alert("Please enter a value larger than 5");
             return false;
         }
-    
+
     }
 
     else {
         clickLimit = Math.round(parseInt($('#clickOrTimeAmount').value));
-        if (clickLimit < 3) {
-            alert("Please enter a value larger than 3");
+        if (clickLimit < 5) {
+            alert("Please enter a value larger than 5");
             return false;
         }
     }
@@ -234,48 +286,4 @@ function stopEvent(event) {
         event.stopPropagation();
 }
 
-$(document).ready(function () {
 
-    if (!localStorage.getItem('clickLimit'))
-        $("input#clickNum").val("20");
-    else
-        $("input#clickNum").val(localStorage.getItem('clickLimit'));
-    if (!localStorage.getItem('key1'))
-        $("input#key1").val("z");
-    else
-        $("input#key1").val(localStorage.getItem('key1'));
-    if (!localStorage.getItem('key2'))
-        $("input#key2").val("x");
-    else
-        $("input#key2").val(localStorage.getItem('key2'));
-    if (!localStorage.getItem('timeLimit'))
-        $("input#clickTime").val("10");
-    else
-        $("input#clickTime").val(localStorage.getItem('timeLimit'));
-    if (!localStorage.getItem('mouse'))
-        $("input[name='cmouse']").prop("checked", false);
-    else
-        $("input[name='cmouse']").prop("checked", localStorage.getItem('mouse') == "true");
-
-    $("#chartContainer").CanvasJSChart({
-        zoomEnabled: true,
-        exportEnabled: true,
-        title: {
-            text: "BPM Chart"
-        },
-        axisY: {
-            title: "BPM",
-            includeZero: false
-        },
-        axisX: {
-            title: "Time",
-        },
-        data: [
-            {
-                type: "spline",
-                dataPoints: []
-            }
-        ]
-    });
-
-});
