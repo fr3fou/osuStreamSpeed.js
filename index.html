@@ -5,26 +5,27 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'/>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="assets/css/style.css">
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
     <script src="canvasjs-1.8.0/jquery.canvasjs.min.js"></script>
-    <script src="main.js"/></script>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+    <script src="assets/js/main.js"/></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" crossorigin="anonymous"></script>
     <title>you suck at streaming v3</title>
-    <a href=https://github.com/simo3003/osuStreamSpeed.js><img style="position: absolute; top: 0; left: 0; border: 0;" src="https://camo.githubusercontent.com/121cd7cbdc3e4855075ea8b558508b91ac463ac2/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f6c6566745f677265656e5f3030373230302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_left_green_007200.png"></a>
   </head>
   <body>
+    <!--background slideshow-->
+
     <!--main conatiner-->
-    <div class="container text-center" role="main" style="font-size:20px;">
+    <div class="container text-center" role="main" id="mainContainer">
           <!--header-->
           <div class="page-header text-center">
             <h1>osu! Stream Speed Benchmark</h1>
           </div>
           <!--radio buttons-->
           <div id="radiobtns" class="text-center">
-                  <input class="radio-inline" style="margin-left: 20px !important" type="radio" name="roption" onClick="radiof(1)" value="clicks" checked /> Clicks
-                  <input class="radio-inline" style="margin-left: 20px !important" type="radio" name="roption" onClick="radiof(2)" value="time" /> Time <br>
+                  <input class="radio-inline" style="margin-left: 20px !important" type="radio" name="roption" onClick="radioSwitch(1)" value="clicks" checked /> Clicks
+                  <input class="radio-inline" style="margin-left: 20px !important" type="radio" name="roption" onClick="radioSwitch(2)" value="time" /> Time <br>
                   <input type="checkbox" name="cmouse"/> Enable mouse buttons
           </div>
           <br>
@@ -32,7 +33,7 @@
           <div id="settings">
                   <div id="numClicks">
                     <label>Click amount</label>
-                      <input id = "clickNum" type="number" min="3"/>
+                      <input id="clickNum" type="number" min="3"/>
                   </div>
                   <div id="timeClicks" style="display:none">
                    <label>Time</label> 
@@ -46,26 +47,35 @@
                   </div>
           </div>
           <!--start/stop button-->
-          <button id="submit" onclick ="beginTest()" type="button">Begin Test</button><br>
+          <button id="submit" onclick ="beginTest()" type="button">Begin Test</button>
           <button id="stopbtn" onClick="endTest()" type="button" style="display:none">Stop Test</button><br>
           <div id="status">Time starts when you make your first click.</div>
           <!--results-->
           <h3>Your Results:</h3>
           <div id="Result">
-            Tap Speed: 0 taps / 0 seconds.<br />
-            Stream Speed: 0 bpm.<br />
-            Unstable Rate: 0.
+            Click Amount: 0 taps / 0 seconds<br/>
+            Stream Speed: 0 bpm<br>
+            Unstable Rate: 0
           </div>
           <!--chart / canvasjs-->
           <div id="chartContainer" class="container" style="width:600px;height:300px;margin-bottom: 80px;margin-top:15px"></div>
     </div>
-
     <footer class="footer">
       <div class="container" style="text-align:left"> 
           Original by arctic, rewritten by Ckris, rewritten again by fr3fou / simo3003<br>
           <a href="https://github.com/simo3003/osuStreamSpeed.js">View Source on Github</a>
       </div>
+      <div id="slideshowContainer">
+          <ul class="cb-slideshow">
+              <li><span>img1</span></li>
+              <li><span>img2</span></li>
+              <li><span>img3</span></li>
+              <li><span>img4</span></li>
+              <li><span>img5</span></li>
+              <li><span>img6</span></li>
+              <li><span>img7</span></li>
+            </ul>
+      </div>
     </footer>
-
   </body>
 </html>
