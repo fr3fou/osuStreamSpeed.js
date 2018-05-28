@@ -164,7 +164,7 @@ function stopEvent(event){
      event.stopPropagation();
    }
 
-$(document).keypress(function (event) {
+$(document).keyup(function (event) {
     if (isTestRunning == true) {
         let key = event.key;
         if (key.toLowerCase().charCodeAt() == (key1.toLowerCase().charCodeAt()) || (key.toLowerCase().charCodeAt() == key2.toLowerCase().charCodeAt())) {
