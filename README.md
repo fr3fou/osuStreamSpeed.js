@@ -18,3 +18,5 @@ A tool that lets you see how fast you can stream in osu!
 [Ckrisirkc](https://github.com/ckrisirkc/osuStreamSpeed.js) for improving it
 
 [kaishh](https://github.com/kaishh/osuStreamSpeed.js) for mouse support
+
+[peppy](https://github.com/peppy) for letting me use the old osu!logo as a base for this logo
