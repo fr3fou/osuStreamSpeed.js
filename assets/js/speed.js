@@ -2,7 +2,7 @@
 // don't worry we all do
 // heh
 
-let clickAmount = [];
+let clicks = [];
 let deviations = [];
 let timeDiff = [];
 
@@ -104,7 +104,7 @@ function InitTest() {
             break;
     }
     isTestRunning = true;
-    clickAmount.length = 0;    
+    clicks.length = 0;    
     deviations.length = 0;
     timeDiff.length = 0;
     counterNumber = 0;
@@ -145,7 +145,7 @@ function StopTest() {
     if (method == 'time')
         window.clearInterval(endTimer);
 
-    if (clickAmount.length == 0) // if user hasn't clicked at all, keep results at their defaults
+    if (clicks.length == 0) // if user hasn't clicked at all, keep results at their defaults
         $("#result").html("\
 	Click Amount: 0 clicks / 0 seconds<br>\
 	Stream Speed: 0 BPM<br>\
@@ -166,6 +166,9 @@ function stopEvent(event){
 
 $(document).keyup(function (event) {
     if (isTestRunning == true) {
+        if (isMouseEnabled) {
+            return false;
+        }
         let key = event.key;
         if (key.toLowerCase().charCodeAt() == (key1.toLowerCase().charCodeAt()) || (key.toLowerCase().charCodeAt() == key2.toLowerCase().charCodeAt())) {
             switch (beginTime) {
@@ -184,7 +187,7 @@ $(document).keyup(function (event) {
                     Update(true);
                     break;
             }
-            if ((clickAmount.length == clickLimit) && (method == "clicks")) {
+            if ((clicks.length == clickLimit) && (method == "clicks")) {
                 StopTest();
                 return;
             }
@@ -220,7 +223,7 @@ $(document).mousedown(function (event) {
                         Update(true);
                         break;
                 }
-                if ((clickAmount.length == clickLimit) && (method == 'clicks')) {
+                if ((clicks.length == clickLimit) && (method == 'clicks')) {
                     StopTest();
                     return;
                 }
@@ -244,14 +247,14 @@ function Update(click) {
             std = Math.sqrt(variance / deviations.length);
             unstableRate = std * 10;
         }
-        clickAmount.push(Date.now());
-        if (clickAmount.length > 1)
-            timeDiff.push(clickAmount[clickAmount.length - 1] - clickAmount[clickAmount.length - 2]);
-        if (clickAmount.length > 2) {
+        clicks.push(Date.now());
+        if (clicks.length > 1)
+            timeDiff.push(clicks[clicks.length - 1] - clicks[clicks.length - 2]);
+        if (clicks.length > 2) {
             let chart = $("#chartContainer").CanvasJSChart();
             chart.options.data[runNumber].dataPoints.push({
                 x: (Date.now() - beginTime) / 1000.0,
-                y: (Math.round((((clickAmount.length) / (Date.now() - beginTime) * 60000) / 4) * 100) / 100)
+                y: (Math.round((((clicks.length) / (Date.now() - beginTime) * 60000) / 4) * 100) / 100)
             });
             chart.render();
         }
@@ -261,22 +264,22 @@ function Update(click) {
         let streamTime = (Date.now() - beginTime) / 1000;
         if (timeDiff.length < 2) {
             $("#result").html("\
-			Click Amount: " + (clickAmount.length.toString() + " clicks / " + streamTime.toFixed(3)) + " seconds<br>\
-			Stream Speed: " + (Math.round((((clickAmount.length) / (Date.now() - beginTime) * 60000) / 4) * 100) / 100).toFixed(2) + " BPM<br>\
+			Click Amount: " + (clicks.length.toString() + " clicks / " + streamTime.toFixed(3)) + " seconds<br>\
+			Stream Speed: " + (Math.round((((clicks.length) / (Date.now() - beginTime) * 60000) / 4) * 100) / 100).toFixed(2) + " BPM<br>\
 			Unstable Rate: n/a\
 		");
         }
         else {
             $("#result").html("\
-				Click Amount: " + (clickAmount.length.toString() + " clicks / " + streamTime.toFixed(3)) + " seconds.<br>\
-				Stream Speed: " + (Math.round((((clickAmount.length) / (Date.now() - beginTime) * 60000) / 4) * 100) / 100).toFixed(2) + " BPM<br>\
+				Click Amount: " + (clicks.length.toString() + " clicks / " + streamTime.toFixed(3)) + " seconds.<br>\
+				Stream Speed: " + (Math.round((((clicks.length) / (Date.now() - beginTime) * 60000) / 4) * 100) / 100).toFixed(2) + " BPM<br>\
 				Unstable Rate: " + (Math.round(unstableRate * 100000) / 100000).toFixed(3) + "\
 			");
             if (counterNumber == 0) {
                 let chart = $("#chartContainer").CanvasJSChart();
                 chart.options.data[runNumber].dataPoints.push({
                     x: (Date.now() - beginTime) / 1000.0,
-                    y: (Math.round((((clickAmount.length) / (Date.now() - beginTime) * 60000) / 4) * 100) / 100)
+                    y: (Math.round((((clicks.length) / (Date.now() - beginTime) * 60000) / 4) * 100) / 100)
                 });
                 chart.render();
             }
